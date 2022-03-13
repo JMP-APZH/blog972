@@ -1,7 +1,60 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import sanityClient from "../client.js";
+import { Link } from 'react-router-dom';
 
 export default function AllPosts(){
-    return <h2>
-                All Posts Page
-            </h2>;
+    const [allPostsData, setAllPosts] = useState(null);
+
+    // GROQ Query / Sanity: https://www.sanity.io/docs/query-cheat-sheet
+    
+
+    useEffect(() => {
+        sanityClient.fetch(
+            `*[_type == "post"]{
+                title,
+                slug,
+                mainImage{
+                    asset->{
+                        _id,
+                        url
+                    }
+                }
+            }`
+        )
+        .then((data) => setAllPosts(data))
+        .catch(console.error);
+    }, [])
+
+    return (
+        <div>
+            <h2>
+                Blog Posts!
+            </h2>
+            <h3>
+                Welcome to my blog posts page!
+            </h3>
+
+            <div>
+                { allPostsData &&
+                    allPostsData.map((post, index) => (
+                        <Link 
+                            to={"/" + post.slug.current} 
+                            key={post.slug.current}>
+                                <span key={index}>
+                                    <img 
+                                        src={post.mainImage.asset.url} 
+                                        alt="main hero for blog post"
+                                    />
+                                
+                                    <span>
+                                        <h2>
+                                            {post.title}
+                                        </h2>
+                                    </span>
+                                </span>
+                        </Link>
+                    ))}
+            </div>
+        </div>
+    )
 }
