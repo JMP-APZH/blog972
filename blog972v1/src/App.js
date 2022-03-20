@@ -1,4 +1,5 @@
 import React from "react";
+import './input.css';
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import AllPosts from "./components/AllPosts";
 import OnePost from "./components/OnePost";
